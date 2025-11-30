@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+import argparse
+import datetime
+import http.client
+import importlib
+import os
+import sys
+import urllib.request
+import zoneinfo
+from collections.abc import Sequence
+from pathlib import Path
+
+
+def cli(argv: Sequence[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        'run',
+        description='solution runner for Advent of Code',
+    )
+    parser.add_argument(
+        '--solutions-dir',
+        type=Path,
+        default=Path('solutions'),
+        help="""
+        path to the directory with the solutions
+        (defaults to solutions/)
+        """,
+    )
+    parser.add_argument(
+        '--inputs-dir',
+        type=Path,
+        default=Path('inputs'),
+        help="""
+        path to the directory with the inputs
+        (defaults to inputs/)
+        """,
+    )
+    parser.add_argument(
+        '--prefix',
+        default='solve_',
+        help="""
+        prefix of the functions that will be selected as the solutions
+        (defaults to 'solve_')
+        """,
+    )
+    parser.add_argument(
+        '-x',
+        nargs='?',
+        metavar='SUFFIX',
+        default='',
+        const='_example',
+        help="""
+        append a suffix to the looked up input file name
+        (defaults to '_example'),
+        i.e. 'day01.txt' -> 'day01_example.txt'
+        """,
+    )
+    parser.add_argument(
+        '-i',
+        '--input',
+        type=Path,
+        default=None,
+        help="force select an input file ('-' for stdin)",
+    )
+    parser.add_argument(
+        '--pull',
+        action='store_true',
+        help="""
+        pull input data ('AOC_SESSION' env var or '.session' file)
+        """,
+    )
+    parser.add_argument(
+        'day',
+        nargs='?',
+        default='.',
+        help="""
+        day number or solution file name. if day is a number,
+        'dayXX.py' will be looked up
+        """,
+    )
+
+    args = parser.parse_args(argv)
+
+    date = datetime.datetime.now(tz=zoneinfo.ZoneInfo('Etc/GMT+5'))
+    if args.day == '.':
+        if date.month != 12 or date.day > 12:
+            raise ValueError("can't infer day if AoC is not ongoing")
+        args.day = str(date.day)
+
+    sys.path.insert(0, str(args.solutions_dir))
+    module_name = f'day{int(args.day):0>2}' if args.day.isdigit() else args.day
+    input_path: Path = (
+        args.input
+        if args.input
+        else (args.inputs_dir / f'{module_name}{args.x}.txt')
+    )
+
+    if args.pull:
+        if not args.day.isdigit():
+            raise ValueError(f'not digit: {args.day}')
+        session = (
+            os.getenv('AOC_SESSION') or Path('.session').read_text().strip()
+        )
+        request = urllib.request.Request(
+            url=f'https://adventofcode.com/2025/day/{int(args.day)}/input',
+            headers={'Cookie': f'session={session}'},
+        )
+        response: http.client.HTTPResponse = urllib.request.urlopen(request)
+        input = response.read()
+
+        input_path.write_bytes(input)
+        return
+
+    if input_path == Path('-'):
+        input = sys.stdin.read()
+    else:
+        input = input_path.read_text()
+
+    module = importlib.import_module(module_name)
+    for name, solution in module.__dict__.items():
+        if name.startswith(args.prefix):
+            print(f'{name.removeprefix(args.prefix)}:', solution(input))
+
+
+if __name__ == '__main__':
+    cli(None)
