@@ -79,3 +79,23 @@ def solve_part3(input: str) -> int:
             i += 1
 
     return sum(rr - ll + 1 for ll, rr in ranges)
+
+
+# NOTE: from the future
+# one more solution
+# made after i saw somewhere that you can sort the ranges
+def solve_part4(input: str) -> int:
+    ranges, _ = parse(input)
+    ranges.sort()
+
+    i = 0
+    while i < len(ranges) - 1:
+        r1 = ranges[i]
+        r2 = ranges[i + 1]
+        if r1[0] <= r2[0] <= r1[1]:
+            ranges[i] = (r1[0], max(r1[1], r2[1]))
+            del ranges[i + 1]
+        else:
+            i += 1
+
+    return sum(rr - ll + 1 for ll, rr in ranges)
