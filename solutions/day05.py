@@ -52,3 +52,30 @@ def solve_part2(input: str) -> int:
                 break
 
     return sum(rr - ll + 1 for ll, rr in ranges)
+
+
+# NOTE: from the future
+# i like this solution more
+# but i did solve the puzzle with the one above
+def solve_part3(input: str) -> int:
+    ranges, _ = parse(input)
+
+    i = j = 0
+    while i != len(ranges):
+        if i != j:
+            r1 = ranges[i]
+            r2 = ranges[j]
+
+            intersected = intersect(r1, r2)
+            if intersected:
+                ranges[i] = intersected
+                del ranges[j]
+                if j < i:
+                    i -= 1
+                j = -1
+        j += 1
+        if j == len(ranges):
+            j = 0
+            i += 1
+
+    return sum(rr - ll + 1 for ll, rr in ranges)
