@@ -33,6 +33,12 @@ def solve_part1(input: str) -> int:
     right = v2(1, 0)
     c = 0
 
+    # NOTE: from the future (after making solve_part3)
+    # i have no idea how i missed that i made visited a list
+    # making visited a set makes the solution ~300x faster on my machine
+    # but i did solve the puzzle with visited being a list
+    # so i can't change that
+    # visited: set[v2] = set()
     visited: list[v2] = []
     heads = [head]
     while heads:
