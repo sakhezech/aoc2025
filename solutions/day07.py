@@ -74,3 +74,31 @@ def solve_part2(input: str) -> int:
                 )
 
     return splits_from_head(head)
+
+
+# NOTE: from the future
+# part1 solution made from part2 solution
+# way faster than what i came up with initially
+def solve_part3(input: str) -> int:
+    matrix, head = parse(input)
+    width = len(matrix[0])
+    height = len(matrix)
+    down = v2(0, 1)
+    left = v2(-1, 0)
+    right = v2(1, 0)
+    splitters: set[v2] = set()
+
+    @functools.cache
+    def splits_from_head(head: v2) -> int:
+        while True:
+            head = head + down
+            if not (0 <= head.x < width) or not (0 <= head.y < height):
+                return 1
+            if matrix[head.y][head.x] == '^':
+                splitters.add(head)
+                return splits_from_head(head + left) + splits_from_head(
+                    head + right
+                )
+
+    _ = splits_from_head(head)
+    return len(splitters)
