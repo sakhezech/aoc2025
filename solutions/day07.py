@@ -40,6 +40,11 @@ def solve_part1(input: str) -> int:
     # so i can't change that
     # visited: set[v2] = set()
     visited: list[v2] = []
+    # NOTE: from the future
+    # also i have no idea why i am remaking the heads list over and over again
+    # instead of `for head in heads:` just do `head = heads.pop(0)`
+    # and append and extend to heads directly
+    # and even better use collections.deque
     heads = [head]
     while heads:
         new_heads = []
