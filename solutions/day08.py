@@ -93,6 +93,11 @@ def solve_part2(input: str) -> int:
     cache: dict[v3, set[v3]] = {}
 
     result = 0
+    # NOTE: from the future
+    # or just iterate through the distances
+    # even more embarrassing
+    # 2x idiot
+    # for _, j1, j2 in distances:
     while distances:
         _, j1, j2 = distances.pop(0)
         if j1 in cache and j2 in cache:
