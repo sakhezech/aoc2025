@@ -46,6 +46,15 @@ def solve_part1(input: str) -> int:
     cache: dict[v3, set[v3]] = {}
 
     for _ in range(1000):
+        # NOTE: from the future (last comment)
+        # i remembered why i did distances.pop() instead of
+        # `for _, j1, j2 in distances[:1000]`
+        # i thought that when we skip a connection we shouldn't include it
+        # in the 1000 we are connecting
+        # and so this originally was a `while c < 1000:` loop
+        # and when i realized that we shouldn't skip counting
+        # i just changed the while loop to `for _ in range(1000):`
+        # and left everything else unchanged
         _, j1, j2 = distances.pop(0)
         if j1 in cache and j2 in cache:
             s1 = cache[j1]
