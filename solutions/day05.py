@@ -57,7 +57,7 @@ def solve_part2(input: str) -> int:
 # NOTE: from the future
 # i like this solution more
 # but i did solve the puzzle with the one above
-def solve_part3(input: str) -> int:
+def extra_part2_1(input: str) -> int:
     ranges, _ = parse(input)
 
     i = j = 0
@@ -84,7 +84,7 @@ def solve_part3(input: str) -> int:
 # NOTE: from the future
 # one more solution
 # made after i saw somewhere that you can sort the ranges
-def solve_part4(input: str) -> int:
+def extra_part2_2(input: str) -> int:
     ranges, _ = parse(input)
     ranges.sort()
 

@@ -33,7 +33,7 @@ def solve_part1(input: str) -> int:
     right = v2(1, 0)
     c = 0
 
-    # NOTE: from the future (after making solve_part3)
+    # NOTE: from the future (after making extra_part1_1)
     # i have no idea how i missed that i made visited a list
     # making visited a set makes the solution ~300x faster on my machine
     # but i did solve the puzzle with visited being a list
@@ -90,7 +90,7 @@ def solve_part2(input: str) -> int:
 # NOTE: from the future
 # part1 solution made from part2 solution
 # way faster than what i came up with initially
-def solve_part3(input: str) -> int:
+def extra_part1_1(input: str) -> int:
     matrix, head = parse(input)
     width = len(matrix[0])
     height = len(matrix)
