@@ -83,6 +83,11 @@ def solve_part2(input: str) -> int:
         for j2 in junctions[i + 1 :]:
             distances.append((j1.get_distance(j2), j1, j2))
     distances.sort()
+    # NOTE: from the future
+    # actually embarrassing, learnt nothing from day07
+    # use collections.deque
+    # makes the solution ~15x faster on my machine
+    # idiot
 
     circuits: list[set[v3]] = []
     cache: dict[v3, set[v3]] = {}
