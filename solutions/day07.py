@@ -1,3 +1,4 @@
+import collections
 import dataclasses
 import functools
 from typing import Self
@@ -85,6 +86,36 @@ def solve_part2(input: str) -> int:
                 )
 
     return splits_from_head(head)
+
+
+# NOTE: from the future
+# solution_part1 with the changes form the comments implemented
+def extra_part1_0(input: str) -> int:
+    matrix, head = parse(input)
+    width = len(matrix[0])
+    height = len(matrix)
+    down = v2(0, 1)
+    left = v2(-1, 0)
+    right = v2(1, 0)
+    c = 0
+
+    visited: set[v2] = set()
+    heads = collections.deque([head])
+    while heads:
+        head = heads.popleft()
+        if head in visited:
+            continue
+        visited.add(head)
+        head = head + down
+        if not (0 <= head.x < width) or not (0 <= head.y < height):
+            continue
+        if matrix[head.y][head.x] == '^':
+            heads.extend((head + left, head + right))
+            c += 1
+        else:
+            heads.append(head)
+
+    return c
 
 
 # NOTE: from the future

@@ -137,3 +137,91 @@ def solve_part2(input: str) -> int:
         result = j1.x * j2.x
 
     return result
+
+
+# NOTE: from the future
+# solution_part1 with the changes form the comments implemented
+def extra_part1_0(input: str) -> int:
+    junctions = parse(input)
+    distances: list[tuple[float, v3, v3]] = []
+    for i, j1 in enumerate(junctions):
+        for j2 in junctions[i + 1 :]:
+            distances.append((j1.get_distance(j2), j1, j2))
+    distances.sort()
+
+    circuits: list[set[v3]] = []
+    cache: dict[v3, set[v3]] = {}
+
+    for _, j1, j2 in distances[:1000]:
+        if j1 in cache and j2 in cache:
+            s1 = cache[j1]
+            s2 = cache[j2]
+            if s1 is s2:
+                continue
+
+            s1.update(s2)
+            circuits.remove(s2)
+            for j in s2:
+                cache[j] = s1
+        elif j1 in cache:
+            s = cache[j1]
+            s.add(j2)
+            cache[j2] = s
+        elif j2 in cache:
+            s = cache[j2]
+            s.add(j1)
+            cache[j1] = s
+        else:
+            s: set[v3] = set()
+            s.add(j1)
+            s.add(j2)
+            cache[j1] = s
+            cache[j2] = s
+            circuits.append(s)
+
+    return math.prod(sorted(len(s) for s in circuits)[-3:])
+
+
+# NOTE: from the future
+# solution_part2 with the changes form the comments implemented
+def extra_part2_0(input: str) -> int:
+    junctions = parse(input)
+    distances: list[tuple[float, v3, v3]] = []
+    for i, j1 in enumerate(junctions):
+        for j2 in junctions[i + 1 :]:
+            distances.append((j1.get_distance(j2), j1, j2))
+    distances.sort()
+
+    circuits: list[set[v3]] = []
+    cache: dict[v3, set[v3]] = {}
+
+    result = 0
+    for _, j1, j2 in distances:
+        if j1 in cache and j2 in cache:
+            s1 = cache[j1]
+            s2 = cache[j2]
+            if s1 is s2:
+                continue
+
+            s1.update(s2)
+            circuits.remove(s2)
+            for j in s2:
+                cache[j] = s1
+        elif j1 in cache:
+            s = cache[j1]
+            s.add(j2)
+            cache[j2] = s
+        elif j2 in cache:
+            s = cache[j2]
+            s.add(j1)
+            cache[j1] = s
+        else:
+            s: set[v3] = set()
+            s.add(j1)
+            s.add(j2)
+            cache[j1] = s
+            cache[j2] = s
+            circuits.append(s)
+        result = j1.x * j2.x
+
+    return result

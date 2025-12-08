@@ -40,3 +40,29 @@ def solve_part2(input: str) -> int:
             raise ValueError(f'unknown direction: {direction}')
 
     return count
+
+
+# NOTE: from the future
+# slightly modified solve_part2 to stop my eyes from bleeding
+def extra_part2_0(input: str) -> int:
+    pointer = 50
+    count = 0
+    for line in input.splitlines():
+        direction, number_str = line[0], line[1:]
+        number = int(number_str)
+        if direction == 'L':
+            started_at_0 = pointer == 0
+            pointer -= number
+
+            rotations, pointer = divmod(pointer, 100)
+            currently_at_0 = pointer == 0
+            count += abs(rotations) + currently_at_0 - started_at_0
+        elif direction == 'R':
+            pointer += number
+
+            rotations, pointer = divmod(pointer, 100)
+            count += rotations
+        else:
+            raise ValueError(f'unknown direction: {direction}')
+
+    return count
