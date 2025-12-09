@@ -23,7 +23,7 @@ def solve_part1(input: str) -> int:
     )
 
 
-def range_in_rect(a: v2, b: v2, edge_tiles: set[v2]) -> bool:
+def edge_in_rect(a: v2, b: v2, edge_tiles: set[v2]) -> bool:
     # NOTE: from the future
     # there has to be a better way to check this
     # instead of going through each edge tile
@@ -69,5 +69,5 @@ def solve_part2(input: str) -> int:
     return max(
         (abs((rect := (a - b)).x) + 1) * (abs(rect.y) + 1)
         for a, b in itertools.combinations(red_tiles, r=2)
-        if not range_in_rect(a, b, edge_tiles)
+        if not edge_in_rect(a, b, edge_tiles)
     )
