@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import datetime
-import html.parser
 import http.client
 import importlib
 import os
@@ -10,56 +9,6 @@ import urllib.request
 import zoneinfo
 from collections.abc import Sequence
 from pathlib import Path
-
-
-class ExampleExtractor(html.parser.HTMLParser):
-    def __init__(self, *, convert_charrefs: bool = True) -> None:
-        super().__init__(convert_charrefs=convert_charrefs)
-        self.hit_example = False
-        self.extracting = False
-        self.done = False
-
-        self.result_parts: list[str] = []
-
-    def handle_starttag(
-        self, tag: str, attrs: list[tuple[str, str | None]]
-    ) -> None:
-        _ = attrs
-        if tag == 'code' and self.hit_example and not self.done:
-            self.extracting = True
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag == 'code' and self.extracting:
-            self.extracting = False
-            self.done = True
-
-    def handle_data(self, data: str) -> None:
-        if self.extracting:
-            self.result_parts.append(data)
-        elif 'example' in data.lower():
-            self.hit_example = True
-
-    def get_example(self, data: str) -> str:
-        self.feed(data)
-        return ''.join(self.result_parts)
-
-
-def pull_input(day: int) -> bytes:
-    session = os.getenv('AOC_SESSION') or Path('.session').read_text().strip()
-    request = urllib.request.Request(
-        url=f'https://adventofcode.com/2025/day/{day}/input',
-        headers={'Cookie': f'session={session}'},
-    )
-    response: http.client.HTTPResponse = urllib.request.urlopen(request)
-    return response.read()
-
-
-def pull_example(day: int) -> bytes:
-    request = urllib.request.Request(
-        url=f'https://adventofcode.com/2025/day/{day}'
-    )
-    response: http.client.HTTPResponse = urllib.request.urlopen(request)
-    return ExampleExtractor().get_example(response.read().decode()).encode()
 
 
 def cli(argv: Sequence[str] | None = None) -> None:
@@ -148,11 +97,15 @@ def cli(argv: Sequence[str] | None = None) -> None:
     if args.pull:
         if not args.day.isdigit():
             raise ValueError(f'not digit: {args.day}')
-        day = int(args.day)
-        if args.x:
-            input = pull_example(day)
-        else:
-            input = pull_input(day)
+        session = (
+            os.getenv('AOC_SESSION') or Path('.session').read_text().strip()
+        )
+        request = urllib.request.Request(
+            url=f'https://adventofcode.com/2025/day/{int(args.day)}/input',
+            headers={'Cookie': f'session={session}'},
+        )
+        response: http.client.HTTPResponse = urllib.request.urlopen(request)
+        input = response.read()
 
         input_path.write_bytes(input)
         return
